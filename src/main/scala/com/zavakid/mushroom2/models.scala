@@ -1,4 +1,4 @@
-package com.zavakid.mushroom.scala
+package com.zavakid.mushroom2
 
 /**
  * @author zavakid 2013年11月2日 下午3:27:16
