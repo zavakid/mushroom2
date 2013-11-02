@@ -12,8 +12,7 @@ resolvers ++= Seq(
     )
 
 libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "1.9.2" % "test",
-  "org.specs2" %% "specs2" % "2.3.1" % "test"
+  "org.scalatest" %% "scalatest" % "1.9.2" % "test"
   )
 
 EclipseKeys.withSource := true
