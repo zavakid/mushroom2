@@ -4,6 +4,7 @@ import com.zavakid.mushroom2.MetricProvider
 import com.zavakid.mushroom2.MetricsSink
 import com.zavakid.mushroom2.Compentent
 import scala.concurrent.Lock
+import com.zavakid.mushroom2.LifeCycle
 
 /**
  * @author zavakid 2013年11月2日 下午7:57:50
@@ -14,12 +15,9 @@ trait MetricsSystem {
    * 如果存在的话，会返回原来老的组件
    */
   def register[T <: Compentent](name: String, desc: String, component: T): T
-
-  def start
-  def shutdown
 }
 
-object MetricsSystem extends MetricsSystem {
+object MetricsSystem extends MetricsSystem with LifeCycle {
   import scala.collection.mutable.MutableList
   val providers = MutableList[MetricProvider]()
   val sinks = MutableList[MetricsSink]()
@@ -51,6 +49,14 @@ object MetricsSystem extends MetricsSystem {
     }
   }
 
-  override def start = ???
-  override def shutdown = ???
+  override def doStart{
+    providers.foreach( _ start)
+    sinks.foreach(_ start)
+  }
+  
+  override def doStop {
+    providers.foreach( _ stop)
+    sinks.foreach(_ stop)
+  }
+
 }

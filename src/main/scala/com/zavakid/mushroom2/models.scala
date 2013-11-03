@@ -17,14 +17,45 @@ case class MetricDeltal[T](val name: String, override val desc: String, val valu
 /** metric 记录，每个 provider 每次提供一个 */
 case class MetricsRecord(val name: String, val desc: String, val metrics: Seq[Metric[_]])
 
-trait Compentent
+trait Compentent {
+  this:LifeCycle =>
+}
 
-trait MetricProvider extends Compentent {
+trait MetricProvider extends Compentent with LifeCycle {
   def getMetricsRecord(all: Boolean): MetricsRecord
 }
 
 /** metric 消费者 */
-trait MetricsSink extends Compentent {
+trait MetricsSink extends Compentent with LifeCycle {
   def putMetrics(record: MetricsRecord)
   def flush
+}
+
+/** 生命周期的管理 */
+trait LifeCycle {
+  @volatile
+  private var running = false
+  
+  def start {
+    synchronized {
+      if(!running){
+        doStart
+        running = true
+      }
+    }
+  }
+  
+  def stop{
+    synchronized{
+      if(running){
+        doStop
+        running = false
+      }
+    }
+  }
+  
+  def isRunning = running
+  
+  def doStart
+  def doStop
 }
