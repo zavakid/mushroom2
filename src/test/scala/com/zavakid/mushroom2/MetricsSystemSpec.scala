@@ -14,7 +14,11 @@ class MetricsSystemSpec extends FunSpec with ShouldMatchers with GivenWhenThen {
   describe("the MetricsSystem") {
       it("can register new metricProvider") {
         given("a new provider")
-        val provider = new MetricProvider{ override def getMetricsRecord(all: Boolean): MetricsRecord = ??? }
+        val provider = new MetricProvider{ 
+          override def getMetricsRecord(all: Boolean): MetricsRecord = ??? 
+          override def doStart = ???
+          override def doStop = ???
+        }
         
         when("we register the provider")
         val returnProvider = MetricsSystem.register("provider", "provider desc ", provider)
@@ -31,7 +35,11 @@ class MetricsSystemSpec extends FunSpec with ShouldMatchers with GivenWhenThen {
       
       it("can register a new metricProvider again"){
         given("a new provider")
-        val newProvider = new MetricProvider{ override def getMetricsRecord(all: Boolean): MetricsRecord = ??? }
+        val newProvider = new MetricProvider{ 
+          override def getMetricsRecord(all: Boolean): MetricsRecord = ??? 
+          override def doStart = ???
+          override def doStop = ???
+        }
         
         when("we register the newProvider")
         val returnProvider = MetricsSystem.register("newProvider", "newProvider desc", newProvider)
@@ -48,7 +56,11 @@ class MetricsSystemSpec extends FunSpec with ShouldMatchers with GivenWhenThen {
       
       it("can  register the same provider more than once with register"){
          given("a provider_1")
-         val provider_1 = new MetricProvider{ override def getMetricsRecord(all: Boolean): MetricsRecord = ??? }
+         val provider_1 = new MetricProvider{ 
+          override def getMetricsRecord(all: Boolean): MetricsRecord = ??? 
+          override def doStart = ???
+          override def doStop = ???
+        }
          
          when("we register provider_1 first twice")
           val returnProvider_1 = MetricsSystem.register("provider_1", "provider_1 desc", provider_1)
