@@ -49,5 +49,46 @@ class LifeCycleSpec extends FunSpec with ShouldMatchers with ConductorMethods wi
             lifecycle.count should be(1)
         }
     }
+    
+     it("can just stop only once") {
+        given("a new lifecycle and count the foreach number with atomicInt")
+        var atomicInt = new AtomicInteger
+        val lifecycle = new LifeCycle{
+          var count = 0
+          def doStart {}
+          def doStop { count = count + 1}
+        }
+        
+        lifecycle start
+        
+        def loopStop = {
+          1 to 100 foreach { _ =>
+            atomicInt.addAndGet(1)
+            lifecycle stop
+          }
+        }
+        
+        when("3 threads starting the lifecycle")
+        thread("thread 1 will start 100 times"){
+          waitForBeat(1)
+          loopStop
+        }
+        
+        thread("thread 2 will start 100 times"){
+          waitForBeat(1)
+          loopStop
+        }
+        
+        thread("thread 3 will start 100 times"){
+          waitForBeat(1)
+          loopStop
+        }
+        
+        then("the lifecycle's count should be 1, atomicInt.get() should be 300")
+        whenFinished{
+            atomicInt.get() should be(300)
+            lifecycle.count should be(1)
+        }
+    }
   }
 }
