@@ -1,10 +1,11 @@
 package com.zavakid.mushroom2
 
+import java.util.concurrent.atomic.AtomicInteger
+
 import org.scalatest.FunSpec
 import org.scalatest.GivenWhenThen
 import org.scalatest.concurrent.ConductorMethods
 import org.scalatest.matchers.ShouldMatchers
-import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * @author zavakid 2013年11月3日 下午7:26:58

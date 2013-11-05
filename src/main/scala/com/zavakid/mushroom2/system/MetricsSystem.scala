@@ -5,6 +5,14 @@ import com.zavakid.mushroom2.MetricsSink
 import com.zavakid.mushroom2.Compentent
 import scala.concurrent.Lock
 import com.zavakid.mushroom2.LifeCycle
+import akka.actor.ActorSystem
+import com.typesafe.config.ConfigFactory
+import akka.actor.Actor
+import akka.actor.Props
+import com.zavakid.mushroom2.MetricsRecord
+import com.zavakid.mushroom2.MetricsRecord
+import scala.collection.immutable.Nil
+import java.net.URLClassLoader
 
 /**
  * @author zavakid 2013年11月2日 下午7:57:50
@@ -24,6 +32,8 @@ object MetricsSystem extends MetricsSystem with LifeCycle {
 
   val providersLock = new Lock
   val sinksLock = new Lock
+  val config = ConfigFactory.load("metrics-test").withFallback(ConfigFactory.load("metrics").withFallback(ConfigFactory.load)).getConfig("metrics")
+  val actorSystem = ActorSystem("metricsAkkaSystem", config)
 
   override def register[T <: Compentent](name: String, desc: String, component: T): T = {
 
@@ -49,14 +59,29 @@ object MetricsSystem extends MetricsSystem with LifeCycle {
     }
   }
 
-  override def doStart{
-    providers.foreach( _ start)
+  override def doStart {
+    providers.foreach(_ start)
     sinks.foreach(_ start)
-  }
-  
-  override def doStop {
-    providers.foreach( _ stop)
-    sinks.foreach(_ stop)
+
+    import actorSystem.dispatcher
+    import scala.concurrent.duration._
+    val interval: Long = config.getMilliseconds("interval")
+
+    actorSystem.scheduler.schedule(interval millisecond, interval millisecond) {
+      val records = providers.toList.map(_.getMetricsRecord(true))
+      records match {
+        case Nil =>
+        case xs: List[MetricsRecord] => sinks.toList.foreach { s =>
+          xs.foreach(s putMetrics _)
+          s.flush
+        }
+      }
+    }
   }
 
+  override def doStop {
+    providers.foreach(_ stop)
+    sinks.foreach(_ stop)
+    actorSystem.shutdown
+  }
 }
