@@ -36,26 +36,24 @@ object MetricsSystem extends MetricsSystem with LifeCycle {
   val actorSystem = ActorSystem("metricsAkkaSystem", config)
 
   override def register[T <: Compentent](name: String, desc: String, component: T): T = {
-    
-    import com.zavakid.mushroom2.Utils.syncWith
-    
-    def tryPut[T](xs: MutableList[T], e: T, lock: Lock) {
-      syncWith(lock){
-        if (!xs.contains(e)) xs += e
-      }
+
+    def tryPut[T](xs: MutableList[T], e: T) {
+      if (!xs.contains(e)) xs += e
     }
 
+    import com.zavakid.mushroom2.Utils.syncWith
     component match {
-      case provider: MetricProvider => {
-        tryPut(providers, provider, providersLock)
-        provider.asInstanceOf[T]
-      }
-      case sink: MetricsSink => {
-        tryPut(sinks, sink, sinksLock)
-        sink.asInstanceOf[T]
-      }
+      case provider: MetricProvider =>
+        syncWith(providersLock) {
+          tryPut(providers, provider)
+        }
+      case sink: MetricsSink =>
+        syncWith(providersLock) {
+          tryPut(sinks, sink)
+        }
       case _ => throw new UnsupportedOperationException(s"${name}'s component type is not support yet")
     }
+    component
   }
 
   override def doStart {
