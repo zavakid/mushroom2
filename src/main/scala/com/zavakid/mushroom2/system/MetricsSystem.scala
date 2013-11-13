@@ -36,13 +36,12 @@ object MetricsSystem extends MetricsSystem with LifeCycle {
   val actorSystem = ActorSystem("metricsAkkaSystem", config)
 
   override def register[T <: Compentent](name: String, desc: String, component: T): T = {
-
+    
+    import com.zavakid.mushroom2.Utils.syncWith
+    
     def tryPut[T](xs: MutableList[T], e: T, lock: Lock) {
-      try {
-        lock.acquire
+      syncWith(lock){
         if (!xs.contains(e)) xs += e
-      } finally {
-        lock.release
       }
     }
 
