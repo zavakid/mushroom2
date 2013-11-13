@@ -32,7 +32,7 @@ object MetricsSystem extends MetricsSystem with LifeCycle {
 
   val providersLock = new Lock
   val sinksLock = new Lock
-  val config = ConfigFactory.load("metrics-test").withFallback(ConfigFactory.load("metrics").withFallback(ConfigFactory.load)).getConfig("metrics")
+  val config = ConfigFactory.load.getConfig("metrics")
   val actorSystem = ActorSystem("metricsAkkaSystem", config)
 
   override def register[T <: Compentent](name: String, desc: String, component: T): T = {
@@ -70,7 +70,7 @@ object MetricsSystem extends MetricsSystem with LifeCycle {
     actorSystem.scheduler.schedule(interval millisecond, interval millisecond) {
       val records = providers.toList.map(_.getMetricsRecord(true))
       records match {
-        case Nil =>
+        case Nil => ()
         case xs: List[MetricsRecord] => sinks.toList.foreach { s =>
           xs.foreach(s putMetrics _)
           s.flush
