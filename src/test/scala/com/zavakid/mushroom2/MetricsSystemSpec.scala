@@ -96,7 +96,6 @@ class MetricsSystemSpec extends FunSpec with ShouldMatchers with GivenWhenThen {
         }
         override def doStart = Unit
         override def doStop = Unit
-        
       }
 
       when("we register the provider, and start the MetricsSystem, metricsRecords should be 2,  flushed should be 2, ")

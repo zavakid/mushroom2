@@ -32,8 +32,9 @@ object MetricsSystem extends MetricsSystem with LifeCycle {
 
   val providersLock = new Lock
   val sinksLock = new Lock
-  val config = ConfigFactory.load.getConfig("metrics")
-  val actorSystem = ActorSystem("metricsAkkaSystem", config)
+  val defaultConfig = ConfigFactory.load
+  val config = defaultConfig.getConfig("metrics").withFallback(defaultConfig)
+  val actorSystem = ActorSystem("metrics", config)
 
   override def register[T <: Compentent](name: String, desc: String, component: T): T = {
 
