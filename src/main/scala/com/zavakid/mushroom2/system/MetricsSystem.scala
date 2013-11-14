@@ -17,15 +17,7 @@ import java.net.URLClassLoader
 /**
  * @author zavakid 2013年11月2日 下午7:57:50
  */
-trait MetricsSystem {
-  /**
-   * 注册一个组件。比如 MetricProvider 或者 MetricsSink
-   * 如果存在的话，会返回原来老的组件
-   */
-  def register[T <: Compentent](name: String, desc: String, component: T): T
-}
-
-object MetricsSystem extends MetricsSystem with LifeCycle {
+object MetricsSystem extends LifeCycle {
   import scala.collection.mutable.MutableList
   val providers = MutableList[MetricProvider]()
   val sinks = MutableList[MetricsSink]()
@@ -36,7 +28,7 @@ object MetricsSystem extends MetricsSystem with LifeCycle {
   val config = defaultConfig.getConfig("metrics").withFallback(defaultConfig)
   val actorSystem = ActorSystem("metrics", config)
 
-  override def register[T <: Compentent](name: String, desc: String, component: T): T = {
+  def register[T <: Compentent](name: String, desc: String, component: T): T = {
 
     def tryPut[T](xs: MutableList[T], e: T) {
       if (!xs.contains(e)) xs += e

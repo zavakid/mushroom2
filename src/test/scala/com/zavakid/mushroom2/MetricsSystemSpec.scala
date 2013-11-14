@@ -86,12 +86,13 @@ class MetricsSystemSpec extends FunSpec with ShouldMatchers with GivenWhenThen {
         var metricsRecords = 0;
         var flushed = 0;
         
-        override def putMetrics(record: MetricsRecord) = record match {
-          case  MetricsRecord("hello", "hello_desc", Nil) => metricsRecords += 1
+        override def putMetrics(record: MetricsRecord):Unit = record match {
+          case  MetricsRecord("hello", "hello_desc", Nil) => 
+            metricsRecords += 1
           case _ => 
         }
         
-        override def flush = {
+        override def flush:Unit = {
           flushed += 1
         }
         override def doStart = Unit

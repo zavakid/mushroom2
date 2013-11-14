@@ -27,8 +27,8 @@ trait MetricProvider extends Compentent with LifeCycle {
 
 /** metric 消费者 */
 trait MetricsSink extends Compentent with LifeCycle {
-  def putMetrics(record: MetricsRecord)
-  def flush
+  def putMetrics(record: MetricsRecord) : Unit
+  def flush : Unit
 }
 
 /** 生命周期的管理 */
@@ -56,6 +56,6 @@ trait LifeCycle {
   
   def isRunning = running
   
-  def doStart
-  def doStop
+  def doStart:Unit
+  def doStop:Unit
 }
