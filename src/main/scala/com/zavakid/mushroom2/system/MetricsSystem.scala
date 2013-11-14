@@ -60,12 +60,12 @@ object MetricsSystem extends MetricsSystem with LifeCycle {
     providers.foreach(_ start)
     sinks.foreach(_ start)
 
-    import actorSystem.dispatcher
     import scala.concurrent.duration._
     val interval: Long = config.getMilliseconds("interval")
 
+    import actorSystem.dispatcher
     actorSystem.scheduler.schedule(interval millisecond, interval millisecond) {
-      val records = providers.toList.map(_.getMetricsRecord(true))
+      val records = providers.toList.map(_.getMetricsRecord(true)) 
       records match {
         case Nil => ()
         case xs: List[MetricsRecord] => sinks.toList.foreach { s =>
