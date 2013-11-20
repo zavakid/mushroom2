@@ -21,3 +21,6 @@ EclipseKeys.withSource := true
 
 EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource
 
+ideaExcludeFolders += ".idea"
+
+ideaExcludeFolders += ".idea_modules"
