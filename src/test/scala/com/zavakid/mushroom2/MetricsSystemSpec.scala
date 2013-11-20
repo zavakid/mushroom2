@@ -14,68 +14,68 @@ class MetricsSystemSpec extends FunSpec with ShouldMatchers with GivenWhenThen {
   describe("the MetricsSystem") {
     java.lang.System.setProperty("config.trace", "loads")
     it("can register new metricProvider") {
-      given("a new provider")
+      Given("a new provider")
       val provider = new MetricProvider {
         override def getMetricsRecord(all: Boolean): MetricsRecord = MetricsRecord("name", "desc", Nil)
         override def doStart = Unit
         override def doStop = Unit
       }
 
-      when("we register the provider")
+      When("we register the provider")
       val returnProvider = MetricsSystem.register("provider", "provider desc ", provider)
 
-      then("the returnProvider should be the provider")
+      Then("the returnProvider should be the provider")
       returnProvider should be(provider)
 
-      and("the providers' size should be 1")
+      And("the providers' size should be 1")
       MetricsSystem.providers.size should be(1)
 
-      and("and the content is the provider")
+      And("and the content is the provider")
       MetricsSystem.providers.head should be(provider)
     }
 
     it("can register a new metricProvider again") {
-      given("a new provider")
+      Given("a new provider")
       val newProvider = new MetricProvider {
         override def getMetricsRecord(all: Boolean): MetricsRecord = MetricsRecord("name", "desc", Nil)
         override def doStart = Unit
         override def doStop = Unit
       }
 
-      when("we register the newProvider")
+      When("we register the newProvider")
       val returnProvider = MetricsSystem.register("newProvider", "newProvider desc", newProvider)
 
-      then("the returnProvider should be the newProvider")
+      Then("the returnProvider should be the newProvider")
       returnProvider should be(newProvider)
 
-      and("the providers' size shoube be 2 this time")
+      And("the providers' size shoube be 2 this time")
       MetricsSystem.providers.size should be(2)
 
-      and("and the last is the newProvider")
+      And("and the last is the newProvider")
       MetricsSystem.providers.last should be(newProvider)
     }
 
     it("can  register the same provider more than once with register") {
-      given("a provider_1")
+      Given("a provider_1")
       val provider_1 = new MetricProvider {
         override def getMetricsRecord(all: Boolean): MetricsRecord = MetricsRecord("name", "desc", Nil)
         override def doStart = Unit
         override def doStop = Unit
       }
 
-      when("we register provider_1 first twice")
+      When("we register provider_1 first twice")
       val returnProvider_1 = MetricsSystem.register("provider_1", "provider_1 desc", provider_1)
       val returnProvider_2 = MetricsSystem.register("provider_1_1", "provider_1 desc_1", provider_1)
 
-      then("the providers' size should just add 1, means 3")
+      Then("the providers' size should just add 1, means 3")
       MetricsSystem.providers.size should be(3)
 
-      and("returnProvider_1 should be returnProvider_2")
+      And("returnProvider_1 should be returnProvider_2")
       returnProvider_1 should be(returnProvider_2)
     }
 
     it("can start with a scheduler") {
-      given("a provider which can exhale metricsRecord, and a sink which can receive the MetricsRecord")
+      Given("a provider which can exhale metricsRecord, and a sink which can receive the MetricsRecord")
       val provider = new MetricProvider {
         override def getMetricsRecord(all: Boolean): MetricsRecord = MetricsRecord("hello", "hello_desc", Nil)
         override def doStart = Unit
@@ -99,10 +99,10 @@ class MetricsSystemSpec extends FunSpec with ShouldMatchers with GivenWhenThen {
         override def doStop = Unit
       }
 
-      when("we register the provider, and start the MetricsSystem, metricsRecords should be 2,  flushed should be 2, ")
+      When("we register the provider, and start the MetricsSystem, metricsRecords should be 2,  flushed should be 2, ")
       try {
-        val providerReturned = MetricsSystem.register("provider", "provider desc", provider)
-        val sinkReturned = MetricsSystem.register("sink", "sink desc", sinker)
+        MetricsSystem.register("provider", "provider desc", provider)
+        MetricsSystem.register("sink", "sink desc", sinker)
         MetricsSystem.start
         Thread sleep 10000
         sinker.metricsRecords should be(2)

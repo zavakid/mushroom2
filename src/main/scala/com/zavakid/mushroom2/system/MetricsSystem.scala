@@ -32,6 +32,7 @@ object MetricsSystem extends LifeCycle {
 
     def tryPut[T](xs: MutableList[T], e: T) {
       if (!xs.contains(e)) xs += e
+      ()
     }
 
     import com.zavakid.mushroom2.Utils.syncWith

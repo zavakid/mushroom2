@@ -10,12 +10,12 @@ sealed trait Metric[T] {
 }
 
 /** 表示计数的 metric */
-case class MetricCounter[T](val name: String, override val desc: String, val value: T) extends Metric[T]
+case class MetricCounter[T](name: String, override val desc: String, value: T) extends Metric[T]
 /** 表示差值的 metric */
-case class MetricDeltal[T](val name: String, override val desc: String, val value: T) extends Metric[T]
+case class MetricDeltal[T](name: String, override val desc: String, value: T) extends Metric[T]
 
 /** metric 记录，每个 provider 每次提供一个 */
-case class MetricsRecord(val name: String, val desc: String, val metrics: Seq[Metric[_]])
+case class MetricsRecord(name: String, desc: String, metrics: Seq[Metric[_]])
 
 trait Component {
   this:LifeCycle =>
