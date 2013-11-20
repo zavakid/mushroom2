@@ -2,7 +2,7 @@ package com.zavakid.mushroom2.system
 
 import com.zavakid.mushroom2.MetricProvider
 import com.zavakid.mushroom2.MetricsSink
-import com.zavakid.mushroom2.Compentent
+import com.zavakid.mushroom2.Component
 import scala.concurrent.Lock
 import com.zavakid.mushroom2.LifeCycle
 import akka.actor.ActorSystem
@@ -28,7 +28,7 @@ object MetricsSystem extends LifeCycle {
   val config = defaultConfig.getConfig("metrics").withFallback(defaultConfig)
   val actorSystem = ActorSystem("metrics", config)
 
-  def register[T <: Compentent](name: String, desc: String, component: T): T = {
+  def register[T <: Component](name: String, desc: String, component: T): T = {
 
     def tryPut[T](xs: MutableList[T], e: T) {
       if (!xs.contains(e)) xs += e

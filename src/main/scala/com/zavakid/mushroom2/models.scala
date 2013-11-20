@@ -17,16 +17,16 @@ case class MetricDeltal[T](val name: String, override val desc: String, val valu
 /** metric 记录，每个 provider 每次提供一个 */
 case class MetricsRecord(val name: String, val desc: String, val metrics: Seq[Metric[_]])
 
-trait Compentent {
+trait Component {
   this:LifeCycle =>
 }
 
-trait MetricProvider extends Compentent with LifeCycle {
+trait MetricProvider extends Component with LifeCycle {
   def getMetricsRecord(all: Boolean): MetricsRecord
 }
 
 /** metric 消费者 */
-trait MetricsSink extends Compentent with LifeCycle {
+trait MetricsSink extends Component with LifeCycle {
   def putMetrics(record: MetricsRecord) : Unit
   def flush : Unit
 }
